@@ -1,0 +1,194 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TECH_DIRECTOR
+  REGISTRAR
+  VIEWER
+}
+
+enum UploadStatus {
+  RECEIVED
+  UPLOADING
+  VALIDATING
+  SCANNING
+  PREVIEWING
+  READY
+  REJECTED
+  NEEDS_MATCH
+  ERROR
+}
+
+enum MatchMode {
+  QR
+  CODE
+  SEARCH
+  GUEST
+}
+
+enum AntivirusStatus {
+  PENDING
+  CLEAN
+  INFECTED
+  ERROR
+}
+
+enum PreviewStatus {
+  PENDING
+  DONE
+  ERROR
+  SKIPPED
+}
+
+enum HelpStatus {
+  OPEN
+  ACK
+  CLOSED
+}
+
+enum WebhookType {
+  TELEGRAM
+  SLACK
+  GENERIC
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+}
+
+model Conference {
+  id           String   @id @default(uuid())
+  name         String
+  dates        String
+  slogan       String?
+  helpContacts String?
+  defaultLang  String   @default("RU")
+  brandKit     BrandKit?
+  sessions     Session[]
+  uploads      Upload[]
+}
+
+model BrandKit {
+  id             String   @id @default(uuid())
+  conferenceId   String   @unique
+  conference     Conference @relation(fields: [conferenceId], references: [id])
+  logoLightUrl   String?
+  logoDarkUrl    String?
+  colorsJson     Json
+  gradientJson   Json
+  fontsJson      Json
+  uiStyleJson    Json
+  attractMediaUrl String?
+  textsJson      Json
+  updatedAt      DateTime @updatedAt
+}
+
+model Terminal {
+  id         String   @id @default(uuid())
+  name       String
+  location   String
+  lastSeenAt DateTime?
+  version    String?
+  status     String
+  diskFree   Int?
+  isLocked   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  conferenceId String
+  conference   Conference @relation(fields: [conferenceId], references: [id])
+  title        String
+  section      String
+  room         String
+  startTime    DateTime
+  endTime      DateTime
+  speakerName  String
+  speakerOrg   String
+  speakerEmail String?
+  speakerPhone String?
+  code         String   @unique
+  qrTokenSeed  String?
+  createdAt    DateTime @default(now())
+}
+
+model Upload {
+  id                  String   @id @default(uuid())
+  conferenceId        String
+  conference          Conference @relation(fields: [conferenceId], references: [id])
+  sessionId           String?
+  guestDataJson       Json?
+  terminalId          String
+  status              UploadStatus
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  deadlineAt          DateTime?
+  matchedBy           MatchMode
+  localReceiptId      String?
+  isOfflineAcceptedBool Boolean @default(false)
+  files               UploadFile[]
+}
+
+model UploadFile {
+  id                   String   @id @default(uuid())
+  uploadId             String
+  upload               Upload   @relation(fields: [uploadId], references: [id])
+  originalName         String
+  storedKey            String
+  sizeBytes            BigInt
+  mime                 String
+  ext                  String
+  versionInt           Int      @default(1)
+  isCurrent            Boolean  @default(true)
+  isLockedForShowBool  Boolean  @default(false)
+  antivirusStatus      AntivirusStatus @default(PENDING)
+  previewStatus        PreviewStatus @default(PENDING)
+  previewKey           String?
+  checksum             String?
+  createdAt            DateTime @default(now())
+}
+
+model HelpRequest {
+  id                 String   @id @default(uuid())
+  conferenceId       String
+  terminalId         String?
+  uploadId           String?
+  status             HelpStatus @default(OPEN)
+  message            String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  acknowledgedByUserId String?
+}
+
+model Webhook {
+  id             String   @id @default(uuid())
+  conferenceId   String
+  type           WebhookType
+  url            String
+  secret         String?
+  enabledBool    Boolean  @default(true)
+  eventsJson     Json
+}
+
+model AuditLog {
+  id              String   @id @default(uuid())
+  actorUserId     String?
+  actorTerminalId String?
+  action          String
+  entity          String
+  entityId        String
+  metaJson        Json?
+  createdAt       DateTime @default(now())
+}

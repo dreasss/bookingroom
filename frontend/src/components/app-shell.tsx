@@ -6,7 +6,8 @@ const links = [
   { to: "/rooms", label: "Rooms" },
   { to: "/bookings", label: "My bookings" },
   { to: "/admin", label: "Admin" },
-  { to: "/analytics", label: "Analytics" }
+  { to: "/analytics", label: "Analytics" },
+  { to: "/conference", label: "Conference Kiosk" }
 ];
 
 export default function AppShell() {
