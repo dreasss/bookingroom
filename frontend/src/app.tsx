@@ -7,6 +7,7 @@ import MyBookings from "./pages/my-bookings";
 import Admin from "./pages/admin";
 import Analytics from "./pages/analytics";
 import RoomDisplay from "./pages/room-display";
+import ConferenceSystemPage from "./pages/conference";
 import AppShell from "./components/app-shell";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/bookings" element={<MyBookings />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/analytics" element={<Analytics />} />
+        <Route path="/conference" element={<ConferenceSystemPage />} />
       </Route>
     </Routes>
   );

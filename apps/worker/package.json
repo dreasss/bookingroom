@@ -1,0 +1,16 @@
+{
+  "name": "conference-worker",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": { "start": "ts-node src/worker.ts" },
+  "dependencies": {
+    "bullmq": "^5.10.3",
+    "ioredis": "^5.4.1",
+    "pino": "^9.3.2"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "@types/node": "^20.14.15"
+  }
+}

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import admin, bookings, rooms, users
+from app.api.routes import admin, bookings, conference, rooms, users
 from app.core.config import settings
 
 app = FastAPI(title=settings.app_name)
@@ -18,6 +18,7 @@ app.include_router(users.router)
 app.include_router(rooms.router)
 app.include_router(bookings.router)
 app.include_router(admin.router)
+app.include_router(conference.router)
 
 
 @app.get("/health")

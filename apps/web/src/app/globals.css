@@ -1,0 +1,8 @@
+:root {
+  --brand-primary: #5b21b6;
+  --brand-accent: #06b6d4;
+}
+body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f8fafc; color: #0f172a; }
+.card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; }
+.btn { border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer; }
+.btn-primary { background: var(--brand-primary); color: white; }
